@@ -14,5 +14,25 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return 'Main Page';
 });
+
+Route::get('/hello', function() {
+  return redirect()->route('bye');
+})->name('hello');
+
+Route::get('/bye', function() {
+  return redirect()->route('hello');
+})->name('bye');
+
+Route::get('/yes', function() {
+  return 'yes';
+});
+
+
+
+
+
+Route::get('/fuck/{name}', function($name) {
+  return "kill {$name}";
+});  

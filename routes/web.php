@@ -14,7 +14,9 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return 'Main Page';
+    return view('index', [
+      //'name' => 'teekun'
+    ]);
 });
 
 Route::get('/hello', function() {
@@ -29,6 +31,9 @@ Route::get('/yes', function() {
   return 'yes';
 });
 
+Route::fallback(function() {
+  return 'Diese Seite existiert nicht!';
+});
 
 
 

@@ -3,7 +3,8 @@
 use Illuminate\Http\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Models\task;
+use App\Models\Task;
+use App\Http\Requests\TaskRequest;
 
 
 /*
@@ -28,7 +29,7 @@ Route::get('/', function () {
 #Main Index Route
 Route::get('/tasks', function () {
     return view('index', [
-      'tasks' => task::latest()->get()
+      'tasks' => Task::latest()->get()
     ]);
 })->name('tasks.index');
 
@@ -37,14 +38,12 @@ Route::view('/tasks/create', 'create')
     ->name('tasks.create');
 
 #Edit Form
-Route::get('/tasks/{id}/edit', function ($id) {
-      return view('edit', ['task' => task::findorfail($id)]);
+Route::get('/tasks/{task}/edit', function (Task $task) {
+      return view('edit', ['task' => $task]);
 })->name('tasks.edit');
 
 #Show Page
-Route::get('/tasks/{id}', function ($id) {
-  $task = task::findorFail($id);
-
+Route::get('/tasks/{task}', function (Task $task) {
   if (!$task) {
     abort(Response::HTTP_NOT_FOUND);
   }
@@ -55,44 +54,43 @@ Route::get('/tasks/{id}', function ($id) {
 
 
 #Create POST Rpute
-Route::post('/tasks', function (Request $request) {
-    $data = $request->validate([
-      'title'=> 'required|max:255',
-      'description'=> 'required',
-      'long_description'=> 'required'
-      ]);
+Route::post('/tasks', function (TaskRequest $request) {
+    // $data = $request->validated();
 
-      $task = new Task();
+    // $task = new Task();
 
-      $task->title = $data['title'];
-      $task->description = $data['description'];
-      $task->long_description = $data['long_description'];
+    // $task->title = $data['title'];
+    // $task->description = $data['description'];
+    // $task->long_description = $data['long_description'];
 
-      $task -> save();
+    // $task -> save();
 
-      return redirect()->route('tasks.show', ['id' => $task->id]) -> with('success','Task created successfully!');
+    $task = Task::create($request->validated());
+    return redirect()->route('tasks.show', ['task' => $task]) -> with('success','Task created successfully!');
 
 })->name('tasks.store');
 
 #Edit PUT Route
-Route::put('/tasks/{id}', function ($id, Request $request) {
-  $data = $request->validate([
-    'title'=> 'required|max:255',
-    'description'=> 'required',
-    'long_description'=> 'required'
-    ]);
+Route::put('/tasks/{task}', function (Task $task, TaskRequest $request) {
+  // $data = $request->validated();
 
-    $task = task::findorFail($id);
+  // $task->title = $data['title'];
+  // $task->description = $data['description'];
+  // $task->long_description = $data['long_description'];
 
-    $task->title = $data['title'];
-    $task->description = $data['description'];
-    $task->long_description = $data['long_description'];
+  // $task -> save();
 
-    $task -> save();
+  $task->update($request->validated());
 
-    return redirect()->route('tasks.show', ['id' => $task->id]) -> with('success','Task updated successfully!');
+  return redirect()->route('tasks.show', ['task' => $task]) -> with('success','Task updated successfully!');
 
 })->name('tasks.update');
+
+Route::delete('/tasks/{task}', function (Task $task) {
+  $task->delete();
+  return redirect()->route('tasks.index') -> with('success', 'Task deleted successfully!');
+})->name('task.destroy');
+
 
 Route::fallback(function() {
   return 'Diese Seite existiert nicht!';

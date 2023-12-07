@@ -29,7 +29,7 @@ Route::get('/', function () {
 #Main Index Route
 Route::get('/tasks', function () {
     return view('index', [
-      'tasks' => Task::latest()->get()
+      'tasks' => Task::latest()->paginate(10)
     ]);
 })->name('tasks.index');
 
@@ -53,7 +53,7 @@ Route::get('/tasks/{task}', function (Task $task) {
 })->name('tasks.show');
 
 
-#Create POST Rpute
+#Create Route
 Route::post('/tasks', function (TaskRequest $request) {
     // $data = $request->validated();
 
@@ -70,7 +70,7 @@ Route::post('/tasks', function (TaskRequest $request) {
 
 })->name('tasks.store');
 
-#Edit PUT Route
+#Edit Route
 Route::put('/tasks/{task}', function (Task $task, TaskRequest $request) {
   // $data = $request->validated();
 
@@ -86,6 +86,7 @@ Route::put('/tasks/{task}', function (Task $task, TaskRequest $request) {
 
 })->name('tasks.update');
 
+
 Route::delete('/tasks/{task}', function (Task $task) {
   $task->delete();
   return redirect()->route('tasks.index') -> with('success', 'Task deleted successfully!');
@@ -95,3 +96,10 @@ Route::delete('/tasks/{task}', function (Task $task) {
 Route::fallback(function() {
   return 'Diese Seite existiert nicht!';
 });
+
+#Completion Toggle Route
+Route::put('/tasks/{task}/toggle-complete', function (Task $task) {
+  $task->toggleCompleted();
+
+  return redirect()->back()->with('success','Task updated successfully');
+})->name('tasks.toggle-complete');

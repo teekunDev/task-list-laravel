@@ -2,14 +2,6 @@
 
 @section('title', isset($task) ? 'Edit Task' : 'Add Task')
 
-@section('styles')
-    <style>
-        .error-msg{
-            color: red;
-            font-size: 0.8rem;
-        }
-    </style>
-@endsection
 
 @section('content')
     <form method="POST" action="{{ isset($task) ? route('tasks.update', ['task' => $task]) : route('tasks.store') }}">
@@ -18,17 +10,17 @@
             @method('PUT')
         @endisset
 
-        <div>
-            <label for="title">
+        <div class="">
+            <label for="title" class="align-text-top">
                 Title
             </label>
             <input text="text" name="title" id="title" value="{{ $task->title ?? old('title') }}"/>
         </div>
         @error('title')
-            <p class="error-msg"> {{ $message }}</p>
+            <p class="error"> {{ $message }}</p>
         @enderror
 
-        <div>
+        <div class="align-text-top">
             <label for="description">
                 Description
             </label>
@@ -36,7 +28,7 @@
         </div>
 
         @error('description')
-            <p class="error-msg"> {{ $message }}</p>
+            <p class="error"> {{ $message }}</p>
         @enderror
 
         <div>
@@ -47,10 +39,10 @@
         </div>
 
         @error('long_description')
-            <p class="error-msg"> {{ $message }}</p>
+            <p class="error"> {{ $message }}</p>
         @enderror
 
-        <button type="submit">
+        <button class="btn" type="submit">
             @isset($task)
                 Edit Task
             @else
